@@ -3,12 +3,14 @@ package singer
 import (
 	"bytes"
 	"encoding/hex"
+	"fmt"
 
 	"github.com/bytom/bytom/crypto/ed25519/chainkd"
 	mnem "github.com/bytom/bytom/wallet/mnemonic"
 	"github.com/pkg/errors"
 
 	"github.com/songqianba/chain-tools/protocol"
+	"github.com/songqianba/chain-tools/signer/element"
 )
 
 // Signer tx signer
@@ -18,18 +20,19 @@ type Signer struct {
 
 // NewSigner return Signer
 func NewSigner(mnemonic string) (*Signer, error) {
-	xprv, _, err := chainkd.NewXKeys(bytes.NewBuffer(mnem.NewSeed(mnemonic, "")))
+	xprv, xpub, err := chainkd.NewXKeys(bytes.NewBuffer(mnem.NewSeed(mnemonic, "")))
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Print(xpub.String())
 	return &Signer{
 		xprv: xprv,
 	}, nil
 }
 
 // Sign sign tx
-func (s *Signer) Sign(tx protocol.WrapTx, signInstructions ...SigningInstructionTemp) (witnesses [][]string, err error) {
+func (s *Signer) Sign(tx protocol.WrapTx, signInstructions ...element.SigningInstructionTemp) (witnesses [][]string, err error) {
 	for i, signingInstruction := range signInstructions {
 		if signingInstruction.GetPubKey() == "" {
 			witnesses = append(witnesses, []string{})
