@@ -1,4 +1,4 @@
-package singer
+package element
 
 // SigningInstructionTemp template
 type SigningInstructionTemp interface {
